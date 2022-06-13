@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
- * @author SJCN33
+ * @author sjcn33
  */
 class UntitledPlugin : JavaPlugin() {
     private val console = Bukkit.getConsoleSender()
