@@ -7,9 +7,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 object UntitledItem {
-    private val testItemStackText =
-        text().content("testItemStack").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE).build()
     val testItemStack = ItemStack(Material.NETHER_STAR).apply {
-        itemMeta = itemMeta.apply { displayName(testItemStackText) }
+        text().content("testItemStack").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE).build()
     }
 }

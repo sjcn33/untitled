@@ -10,9 +10,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-/**
- * @author sjcn33
- */
 class UntitledPlugin : JavaPlugin() {
     private val console = Bukkit.getConsoleSender()
 
@@ -21,7 +18,7 @@ class UntitledPlugin : JavaPlugin() {
         Untitled.untitledManager = untitledManager
         console.sendMessage("${ChatColor.YELLOW}[Untitled] : ==============================")
         console.sendMessage("${ChatColor.YELLOW}[Untitled] : Enable UntitledPlugin")
-        console.sendMessage("${ChatColor.YELLOW}[Untitled] : by SJCN33")
+        console.sendMessage("${ChatColor.YELLOW}[Untitled] : by sjcn33")
         console.sendMessage("${ChatColor.YELLOW}[Untitled] : ==============================")
     }
 
