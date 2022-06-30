@@ -1,7 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    kotlin("jvm") version Dependency.Kotlin.Version
+    id("io.papermc.paperweight.userdev") version "1.3.7"
 }
 
 java {
@@ -12,23 +11,26 @@ java {
 
 repositories {
     mavenCentral()
-    maven(url = "https://papermc.io/repo/repository/maven-public/")
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
-
     implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-    testImplementation("org.mockito:mockito-core:4.5.1")
+    paperDevBundle("1.19-R0.1-SNAPSHOT")
 }
 
-project.extra.set("packageName", name.replace("-", ""))
-project.extra.set("pluginName", name.split('-').joinToString("") { it.capitalize() })
+val pluginName = rootProject.name.split('-').joinToString("") { it.capitalize() }
+
+extra.apply {
+    set("pluginName", pluginName)
+    set("packageName", rootProject.name.replace("-", ""))
+
+    set("kotlinVersion", Dependency.Kotlin.Version)
+}
 
 tasks {
+    // generate plugin.yml
     processResources {
         filesMatching("**/*.yml") {
             expand(project.properties)
@@ -36,35 +38,15 @@ tasks {
         }
     }
 
-    test {
-        useJUnitPlatform()
-    }
+    register<Copy>("paperJar") {
+        from(reobfJar)
 
-    create<Jar>("paperJar") {
-        from(sourceSets["main"].output)
-        archiveBaseName.set(project.extra.properties["pluginName"].toString())
-        archiveVersion.set("") // For bukkit plugin update
+        val jarName = "$pluginName.jar"
+        rename { jarName }
+        val plugins = File("./.debug-server/plugins")
+        val plugin = File(plugins, "$pluginName.jar")
 
-        doLast {
-            copy {
-                from(archiveFile)
-                val plugins = File(rootDir, ".debug/plugins/")
-                into(if (File(plugins, archiveFileName.get()).exists()) File(plugins, "update") else plugins)
-            }
-        }
-    }
-
-    shadowJar {
-        from(sourceSets["main"].output)
-        archiveBaseName.set(project.extra.properties["pluginName"].toString())
-        archiveVersion.set("") // For bukkit plugin update
-
-        doLast {
-            copy {
-                from(archiveFile)
-                val plugins = File(rootDir, ".debug/plugins/")
-                into(if (File(plugins, archiveFileName.get()).exists()) File(plugins, "update") else plugins)
-            }
-        }
+        if (plugin.exists()) into(File(plugins, "update"))
+        else into(plugins)
     }
 }
